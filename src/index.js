@@ -12,18 +12,20 @@ const users = [];
 function checksExistsUserAccount(request, response, next) {
   const { username } = request.headers;
 
-  const ckeckuser = users.find( user => user.username === username);
+  const user = users.find( user => user.username === username);
 
-  if(!ckeckuser){
-    return response.status(404).json({error: 'User not found'})
-    
+  if(!user){
+    return response.status(404).json({error: 'User not found'})  
   }
+  request.user = user;
+
   return next();
  
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
   const {user} = request;
+
 
   if (user.pro === false){
     return response.status(403).json({error: 'Not pro'})
@@ -41,16 +43,18 @@ function checksTodoExists(request, response, next) {
   if (!user){
     return response.status(404).json({error: "User not found"})
   }
-  const ckecktodo = user.todos.find( todo => todo.id === id)
-  const ValidateID = validate(user.todos.id)
+  /*const ckecktodo = user.todos.find( todo => todo.id === id) */
+
+  const ValidateID = validate(id)
 
   if (ValidateID === false){
-    return response.status(404).json({error: "Bad Request"})
+    return response.status(400).json({error: "Bad Request"})
   }
 
    if (!user.todos.id){
     return response.status(404).json({error: "ID not found"})
   }
+  users.id
 
   return next();
 
@@ -58,12 +62,13 @@ function checksTodoExists(request, response, next) {
 
 function findUserById(request, response, next) {
   const {id} = request.params;
-  const userID = users.id.find( userid => userid.id === id );
+
+  const userID = users.find( userid => userid.id === id );
   
   if (!userID){
     return response.status(404).json({error: "ID not found"})
   }
-  users.id=id;
+  
   return next();
 }
 
