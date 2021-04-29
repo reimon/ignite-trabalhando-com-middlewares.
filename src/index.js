@@ -25,12 +25,13 @@ function checksExistsUserAccount(request, response, next) {
 
 function checksCreateTodosUserAvailability(request, response, next) {
   const {user} = request;
+  const {pro, todos} = user;
 
-
-  if (user.pro === false){
-    return response.status(403).json({error: 'Not pro'})
+  if (!pro && todos.length >9){
+    return response.status(403).json({error: 'User Not pro or User reached maximum number of Todos!'})
 
   }
+
   return next();
 }
 
@@ -43,7 +44,7 @@ function checksTodoExists(request, response, next) {
   if (!user){
     return response.status(404).json({error: "User not found"})
   }
-  /*const ckecktodo = user.todos.find( todo => todo.id === id) */
+ 
 
   const ValidateID = validate(id)
 
@@ -61,14 +62,17 @@ function checksTodoExists(request, response, next) {
 }
 
 function findUserById(request, response, next) {
+  
   const {id} = request.params;
 
-  const userID = users.find( userid => userid.id === id );
+  const userID = users.find( userID => userID.id === id );
   
   if (!userID){
-    return response.status(404).json({error: "ID not found"})
+    return response.status(404).json({error: 'User not found'});
   }
   
+  request.user = userID;
+
   return next();
 }
 
