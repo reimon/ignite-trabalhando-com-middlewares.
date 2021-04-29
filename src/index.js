@@ -45,17 +45,17 @@ function checksTodoExists(request, response, next) {
     return response.status(404).json({error: "User not found"})
   }
  
-
-  const ValidateID = validate(id)
-
-  if (ValidateID === false){
+  if (!validate(id)){
     return response.status(400).json({error: "Bad Request"})
   }
 
-   if (!user.todos.id){
-    return response.status(404).json({error: "ID not found"})
+  const todo = user.todos.find(todo => todo.id === id)
+
+   if (!todo){
+    return response.status(404).json({error: "We can't find this todo with this ID"})
   }
-  users.id
+  request.user = user;
+  request.todo = todo;
 
   return next();
 
@@ -65,7 +65,7 @@ function findUserById(request, response, next) {
   
   const {id} = request.params;
 
-  const userID = users.find( userID => userID.id === id );
+  const userID = users.find( user => user.id === id );
   
   if (!userID){
     return response.status(404).json({error: 'User not found'});
